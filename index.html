@@ -1,0 +1,1167 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f3ed">
+  <title>ÉTHYL — Бутик одежды</title>
+  <meta name="description" content="ÉTHYL — одежда из качественных материалов. Откройте коллекцию бутика и выберите свой стиль.">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: "#f7f3ed",
+            gold: "#a17b45",
+            ink: "#28231e",
+            sand: "#e9dfd1"
+          },
+          fontFamily: {
+            sans: ["DM Sans", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --cream: #f7f3ed;
+      --gold: #a17b45;
+      --ink: #28231e;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    button:focus-visible, a:focus-visible, input:focus-visible,
+    textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    .serif { font-family: "Playfair Display", serif; }
+
+    .gold-button {
+      background: #98713e;
+      color: white;
+      transition: background .2s, transform .2s;
+    }
+
+    .gold-button:hover {
+      background: #78572f;
+    }
+
+    .product-card {
+      border: 1px solid #e7dfd4;
+      background: #fffdf9;
+      transition: box-shadow .2s, transform .2s;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 10px 30px #5d44200d;
+      transform: translateY(-2px);
+    }
+
+    .product-image {
+      aspect-ratio: 4 / 4.5;
+      width: 100%;
+      object-fit: cover;
+      background: #e9dfd1;
+      display: block;
+    }
+
+    .category-button {
+      border: 1px solid #ded3c5;
+      transition: .2s;
+    }
+
+    .category-button.active,
+    .category-button:hover {
+      background: #98713e;
+      color: white;
+      border-color: #98713e;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      background: rgba(32, 27, 21, .63);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-panel {
+      width: 100%;
+      max-width: 900px;
+      max-height: 92dvh;
+      overflow-y: auto;
+      background: #fffdf9;
+      box-shadow: 0 25px 80px #0003;
+    }
+
+    .size-option {
+      border: 1px solid #ded4c6;
+      min-width: 42px;
+      padding: 9px 12px;
+      transition: .15s;
+    }
+
+    .size-option.active {
+      background: #28231e;
+      color: white;
+      border-color: #28231e;
+    }
+
+    .icon-button {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid #e5ddd2;
+      background: #fffdf9;
+    }
+
+    .icon-button:hover { background: #f1e9de; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 200;
+      max-width: calc(100vw - 36px);
+      padding: 14px 18px;
+      background: #28231e;
+      color: white;
+      box-shadow: 0 8px 30px #0002;
+    }
+
+    .toast[hidden] { display: none; }
+
+    .cart-line {
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 14px;
+      padding: 15px 0;
+      border-bottom: 1px solid #e7dfd4;
+    }
+
+    .cart-line img {
+      width: 76px;
+      height: 92px;
+      object-fit: cover;
+    }
+
+    .field {
+      width: 100%;
+      border: 1px solid #e0d6c9;
+      background: #fffdf9;
+      padding: 12px 14px;
+      color: #28231e;
+    }
+
+    .field::placeholder { color: #999087; }
+
+    .section-anchor { scroll-margin-top: 85px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ШАПКА -->
+  <header class="sticky top-0 z-50 border-b border-[#e9dfd1] bg-[#f7f3ed]/95 backdrop-blur">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+
+      <a href="#home" class="flex shrink-0 items-center gap-2" aria-label="ÉTHYL — главная">
+        <span class="text-2xl text-gold">✦</span>
+        <span class="serif text-2xl tracking-[.12em]">ÉTHYL</span>
+      </a>
+
+      <nav class="hidden items-center gap-7 text-sm md:flex">
+        <a href="#home" class="hover:text-gold">Главная</a>
+        <a href="#catalog" class="hover:text-gold">Каталог</a>
+        <a href="#about" class="hover:text-gold">О нас</a>
+        <a href="#reviews" class="hover:text-gold">Отзывы</a>
+        <a href="#contacts" class="hover:text-gold">Контакты</a>
+      </nav>
+
+      <div class="flex items-center gap-1 sm:gap-2">
+        <button id="searchBtn" class="icon-button border-0" aria-label="Поиск">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16 16 5 5"/></svg>
+        </button>
+
+        <button id="favoritesBtn" class="icon-button border-0" aria-label="Избранное">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6l1.2 1.2L12 21l7.6-7.6 1.2-1.2a5.4 5.4 0 0 0 0-7.6Z"/></svg>
+        </button>
+
+        <button id="cartBtn" class="icon-button relative border-0" aria-label="Корзина">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+          <span id="cartCount" class="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-gold px-1 text-[10px] text-white">0</span>
+        </button>
+
+        <button id="menuBtn" class="icon-button border-0 md:hidden" aria-label="Открыть меню" aria-expanded="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="hidden border-t border-[#e9dfd1] bg-cream px-5 py-4 md:hidden">
+      <nav class="flex flex-col gap-4 text-sm">
+        <a href="#home">Главная</a>
+        <a href="#catalog">Каталог</a>
+        <a href="#about">О нас</a>
+        <a href="#reviews">Отзывы</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+    </div>
+
+    <div id="searchPanel" class="hidden border-t border-[#e9dfd1] bg-white px-4 py-3">
+      <div class="mx-auto flex max-w-3xl gap-2">
+        <input id="searchInput" class="field" placeholder="Название товара, например пальто..." aria-label="Поиск товаров">
+        <button id="searchApply" class="gold-button px-5">Найти</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ГЛАВНЫЙ БАННЕР -->
+    <section id="home" class="section-anchor relative overflow-hidden">
+      <div class="grid min-h-[410px] md:min-h-[510px] md:grid-cols-2">
+        <div class="flex items-center px-6 py-14 sm:px-12 lg:px-20">
+          <div class="max-w-xl">
+            <p class="mb-5 text-xs uppercase tracking-[.3em] text-gold">СТИЛЬ · КАЧЕСТВО · ВДОХНОВЕНИЕ</p>
+            <h1 class="serif text-4xl leading-tight sm:text-5xl lg:text-6xl">
+              Одежда, которая<br>подчёркивает тебя
+            </h1>
+            <p class="mt-6 max-w-md text-sm leading-7 text-[#766d63] sm:text-base">
+              Премиальные материалы, актуальные модели и забота о каждой детали.
+              Открой свой стиль вместе с ÉTHYL.
+            </p>
+            <a href="#catalog" class="gold-button mt-7 inline-flex items-center gap-4 rounded-full px-6 py-3 text-sm">
+              Перейти к каталогу <span>→</span>
+            </a>
+            <div class="mt-9 flex flex-wrap gap-5 text-xs text-[#766d63]">
+              <span>✧ Качественные материалы</span>
+              <span>✧ Внимание к деталям</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative min-h-[300px] bg-[#e4d4c1]">
+          <img
+            src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=85"
+            alt="Элегантный образ в бежевых оттенках"
+            class="absolute inset-0 h-full w-full object-cover object-center"
+          >
+          <div class="absolute inset-0 bg-gradient-to-r from-[#f7f3ed]/20 to-transparent"></div>
+          <div class="absolute bottom-7 right-6 bg-white/90 px-5 py-4 sm:right-10">
+            <p class="serif text-xl">Твой стиль —</p>
+            <p class="text-sm text-[#766d63]">наша забота</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- КАТЕГОРИИ -->
+    <section class="section-anchor mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="mb-6">
+        <h2 class="serif text-3xl">Категории</h2>
+        <p class="mt-1 text-sm text-[#91877c]">Выбери то, что подходит именно тебе</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <button class="category-button overflow-hidden rounded-md text-left" data-category="Верхняя одежда">
+          <img src="https://images.unsplash.com/photo-1548624149-f3221f4e8c0b?auto=format&fit=crop&w=500&q=80" alt="Верхняя одежда" class="h-36 w-full object-cover sm:h-44" loading="lazy">
+          <span class="flex items-center justify-between gap-2 px-3 py-3 text-xs sm:text-sm">Верхняя одежда <span>→</span></span>
+        </button>
+
+        <button class="category-button overflow-hidden rounded-md text-left" data-category="Кофты, свитеры">
+          <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=500&q=80" alt="Кофты и свитеры" class="h-36 w-full object-cover sm:h-44" loading="lazy">
+          <span class="flex items-center justify-between gap-2 px-3 py-3 text-xs sm:text-sm">Кофты, свитеры <span>→</span></span>
+        </button>
+
+        <button class="category-button overflow-hidden rounded-md text-left" data-category="Брюки">
+          <img src="https://images.unsplash.com/photo-1506629905607-d9c297d6f3a1?auto=format&fit=crop&w=500&q=80" alt="Брюки" class="h-36 w-full object-cover sm:h-44" loading="lazy">
+          <span class="flex items-center justify-between gap-2 px-3 py-3 text-xs sm:text-sm">Брюки <span>→</span></span>
+        </button>
+
+        <button class="category-button overflow-hidden rounded-md text-left" data-category="Платья">
+          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=500&q=80" alt="Платья" class="h-36 w-full object-cover sm:h-44" loading="lazy">
+          <span class="flex items-center justify-between gap-2 px-3 py-3 text-xs sm:text-sm">Платья <span>→</span></span>
+        </button>
+
+        <button class="category-button overflow-hidden rounded-md text-left" data-category="Другое">
+          <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80" alt="Аксессуары" class="h-36 w-full object-cover sm:h-44" loading="lazy">
+          <span class="flex items-center justify-between gap-2 px-3 py-3 text-xs sm:text-sm">Другое <span>→</span></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- КАТАЛОГ -->
+    <section id="catalog" class="section-anchor border-y border-[#e9dfd1] bg-[#fcfaf6]">
+      <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="mb-2 text-xs uppercase tracking-[.25em] text-gold">НАША КОЛЛЕКЦИЯ</p>
+            <h2 class="serif text-3xl sm:text-4xl">Популярные товары</h2>
+            <p id="catalogSubtitle" class="mt-2 text-sm text-[#91877c]">Лучшие позиции из нашего каталога</p>
+          </div>
+          <button id="showAll" class="text-sm text-gold hover:underline">Смотреть весь каталог →</button>
+        </div>
+
+        <div id="categoryFilters" class="mt-6 flex gap-2 overflow-x-auto pb-3">
+          <button class="category-button active shrink-0 rounded-full px-4 py-2 text-xs" data-category="Все">Все товары</button>
+          <button class="category-button shrink-0 rounded-full px-4 py-2 text-xs" data-category="Верхняя одежда">Верхняя одежда</button>
+          <button class="category-button shrink-0 rounded-full px-4 py-2 text-xs" data-category="Кофты, свитеры">Кофты, свитеры</button>
+          <button class="category-button shrink-0 rounded-full px-4 py-2 text-xs" data-category="Брюки">Брюки</button>
+          <button class="category-button shrink-0 rounded-full px-4 py-2 text-xs" data-category="Платья">Платья</button>
+          <button class="category-button shrink-0 rounded-full px-4 py-2 text-xs" data-category="Другое">Другое</button>
+        </div>
+
+        <div id="productsGrid" class="mt-5 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-5"></div>
+
+        <div id="emptyProducts" class="hidden py-16 text-center">
+          <p class="serif text-2xl">Ничего не найдено</p>
+          <p class="mt-2 text-sm text-[#91877c]">Попробуй изменить поисковый запрос.</p>
+          <button id="clearSearch" class="gold-button mt-5 px-5 py-3 text-sm">Показать все товары</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- О НАС -->
+    <section id="about" class="section-anchor mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="grid items-center gap-10 md:grid-cols-2">
+        <div>
+          <p class="mb-3 text-xs uppercase tracking-[.25em] text-gold">НАША ФИЛОСОФИЯ</p>
+          <h2 class="serif text-4xl sm:text-5xl">О нас</h2>
+          <p class="mt-6 text-sm leading-8 text-[#766d63]">
+            ÉTHYL — это больше, чем просто одежда. Это уверенность в себе,
+            внимание к деталям и стиль, который остаётся актуальным.
+          </p>
+          <p class="mt-3 text-sm leading-8 text-[#766d63]">
+            Мы выбираем модели, в которых комфортно жить, работать,
+            встречаться с близкими и чувствовать себя особенной каждый день.
+            Наша цель — сделать качественную одежду частью твоей повседневной жизни.
+          </p>
+
+          <div class="mt-8 grid grid-cols-3 gap-3 border-t border-[#e4d9cb] pt-6">
+            <div>
+              <span class="text-2xl text-gold">◇</span>
+              <p class="mt-2 text-xs leading-5">Качественные материалы</p>
+            </div>
+            <div>
+              <span class="text-2xl text-gold">♧</span>
+              <p class="mt-2 text-xs leading-5">Актуальные модели</p>
+            </div>
+            <div>
+              <span class="text-2xl text-gold">♡</span>
+              <p class="mt-2 text-xs leading-5">Забота о клиентах</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1000&q=85"
+               alt="Интерьер бутика одежды" class="h-[340px] w-full object-cover sm:h-[440px]" loading="lazy">
+          <div class="absolute -bottom-4 -left-3 bg-white px-5 py-4 shadow-lg sm:-left-5">
+            <p class="serif text-xl">ÉTHYL</p>
+            <p class="mt-1 text-xs text-[#91877c]">Стиль в каждой детали</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- АДРЕС И ГРАФИК -->
+    <section class="border-y border-[#e9dfd1] bg-[#eee5d9]">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-2 lg:px-8">
+        <div>
+          <p class="mb-3 text-xs uppercase tracking-[.25em] text-gold">МЫ ЖДЁМ ТЕБЯ</p>
+          <h2 class="serif text-3xl">Наш бутик</h2>
+          <p class="mt-3 text-sm leading-7 text-[#766d63]">Приходи познакомиться с коллекцией, оценить материалы и подобрать образ вместе с нами.</p>
+
+          <div class="mt-7 flex gap-4">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gold text-xl text-white">⌖</span>
+            <div>
+              <p class="font-semibold">Адрес бутика</p>
+              <p class="mt-1 text-sm text-[#766d63]">Университетский проспект, 7</p>
+            </div>
+          </div>
+
+          <div class="mt-5 flex gap-4">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gold text-xl text-white">◷</span>
+            <div>
+              <p class="font-semibold">График работы</p>
+              <p class="mt-1 text-sm text-[#766d63]">Ежедневно с 08:00 до 20:00</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex min-h-[240px] flex-col items-center justify-center border border-[#d8c8b5] bg-[#e4d7c7] p-7 text-center">
+          <span class="text-4xl text-gold">⌖</span>
+          <p class="serif mt-3 text-2xl">ÉTHYL Boutique</p>
+          <p class="mt-2 text-sm text-[#766d63]">Университетский проспект, 7</p>
+          <p class="mt-1 text-xs text-[#91877c]">Адрес указан как пример</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=Университетский+проспект+7"
+             target="_blank" rel="noopener noreferrer"
+             class="gold-button mt-5 px-5 py-3 text-sm">Посмотреть на карте ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ОТЗЫВЫ -->
+    <section id="reviews" class="section-anchor mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <p class="mb-3 text-xs uppercase tracking-[.25em] text-gold">ВАШИ ВПЕЧАТЛЕНИЯ</p>
+        <h2 class="serif text-3xl sm:text-4xl">Отзывы покупателей</h2>
+        <p class="mt-3 text-sm text-[#91877c]">Нам важно, чтобы ты возвращалась с улыбкой.</p>
+      </div>
+
+      <div id="reviewsGrid" class="mt-10 grid gap-5 md:grid-cols-3">
+        <article class="border border-[#e6ddd1] bg-white/70 p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="grid h-11 w-11 place-items-center rounded-full bg-[#e8d9c7] font-semibold">АК</div>
+              <div><p class="text-sm font-semibold">Анастасия К.</p><p class="text-xs text-[#91877c]">12.09.2025</p></div>
+            </div>
+            <span class="text-gold">★★★★★</span>
+          </div>
+          <p class="mt-5 text-sm leading-7 text-[#766d63]">Очень довольна покупкой! Качество на высоте, вещь подошла идеально. Обязательно вернусь.</p>
+        </article>
+
+        <article class="border border-[#e6ddd1] bg-white/70 p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="grid h-11 w-11 place-items-center rounded-full bg-[#e8d9c7] font-semibold">ЕС</div>
+              <div><p class="text-sm font-semibold">Екатерина С.</p><p class="text-xs text-[#91877c]">03.10.2025</p></div>
+            </div>
+            <span class="text-gold">★★★★★</span>
+          </div>
+          <p class="mt-5 text-sm leading-7 text-[#766d63]">Стильный магазин с хорошим ассортиментом. Персонал вежливый и помог с выбором.</p>
+        </article>
+
+        <article class="border border-[#e6ddd1] bg-white/70 p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="grid h-11 w-11 place-items-center rounded-full bg-[#e8d9c7] font-semibold">МР</div>
+              <div><p class="text-sm font-semibold">Мария Р.</p><p class="text-xs text-[#91877c]">15.10.2025</p></div>
+            </div>
+            <span class="text-gold">★★★★★</span>
+          </div>
+          <p class="mt-5 text-sm leading-7 text-[#766d63]">Нашла здесь идеальное пальто. Приятная ткань, красивый крой и универсальный цвет.</p>
+        </article>
+      </div>
+
+      <p class="mt-5 text-center text-xs text-[#91877c]">Демонстрационные отзывы — замени их реальными отзывами покупателей перед публикацией.</p>
+    </section>
+
+    <!-- КОНТАКТЫ -->
+    <section id="contacts" class="section-anchor border-t border-[#e9dfd1] bg-[#eee5d9]">
+      <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:px-8">
+        <div>
+          <p class="mb-3 text-xs uppercase tracking-[.25em] text-gold">МЫ НА СВЯЗИ</p>
+          <h2 class="serif text-4xl">Контакты</h2>
+          <p class="mt-4 max-w-md text-sm leading-7 text-[#766d63]">Есть вопросы по размерам, наличию или заказу? Напиши нам — администратор поможет с выбором.</p>
+
+          <div class="mt-7 space-y-5">
+            <div>
+              <p class="text-xs text-[#91877c]">ТЕЛЕФОН АДМИНИСТРАТОРА</p>
+              <a href="tel:+70000000000" class="mt-1 inline-block text-lg hover:text-gold">+7 (000) 000-00-00</a>
+            </div>
+            <div>
+              <p class="text-xs text-[#91877c]">ЭЛЕКТРОННАЯ ПОЧТА</p>
+              <a href="mailto:hello@ethyl.example" class="mt-1 inline-block text-lg hover:text-gold">hello@ethyl.example</a>
+            </div>
+            <div>
+              <p class="text-xs text-[#91877c]">ВРЕМЯ РАБОТЫ</p>
+              <p class="mt-1 text-sm">Ежедневно, 08:00–20:00</p>
+            </div>
+          </div>
+          <p class="mt-6 text-xs leading-6 text-[#91877c]">Телефон и почта — примеры. Укажи реальные контакты бутика перед публикацией.</p>
+        </div>
+
+        <div class="bg-[#f9f6f1] p-6 sm:p-8">
+          <h3 class="serif text-2xl">Написать администратору</h3>
+          <p class="mt-2 text-sm text-[#91877c]">Заполни форму, и мы сможем связаться с тобой.</p>
+
+          <form id="contactForm" class="mt-6 space-y-4">
+            <div>
+              <label for="contactName" class="mb-2 block text-xs">Твоё имя</label>
+              <input id="contactName" name="name" class="field" placeholder="Как к тебе обращаться?" required maxlength="100">
+            </div>
+            <div>
+              <label for="contactWay" class="mb-2 block text-xs">Телефон или электронная почта</label>
+              <input id="contactWay" name="contact" class="field" placeholder="Как с тобой связаться?" required maxlength="150">
+            </div>
+            <div>
+              <label for="contactMessage" class="mb-2 block text-xs">Сообщение</label>
+              <textarea id="contactMessage" name="message" rows="4" class="field resize-y" placeholder="Например, хочу узнать о наличии пальто..." required maxlength="2000"></textarea>
+            </div>
+            <button type="submit" class="gold-button w-full px-5 py-3 text-sm">Отправить сообщение →</button>
+            <p class="text-xs leading-5 text-[#91877c]">Демонстрационная форма. Для реальной отправки потребуется подключить почту или сервер.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ПОДВАЛ -->
+  <footer class="border-t border-[#e3d8ca] bg-[#f7f3ed]">
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-4 py-7 sm:px-6 md:flex-row lg:px-8">
+      <a href="#home" class="serif text-2xl tracking-[.15em]">ÉTHYL</a>
+      <p class="text-center text-xs text-[#91877c]">© 2026 ÉTHYL. Все права защищены.</p>
+      <div class="flex gap-5 text-sm">
+        <a href="#contacts" class="hover:text-gold">Контакты</a>
+        <a href="#about" class="hover:text-gold">О бутике</a>
+        <a href="#catalog" class="hover:text-gold">Каталог</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- МОДАЛЬНОЕ ОКНО ТОВАРА -->
+  <div id="productModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-panel relative">
+      <button id="closeProductModal" class="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-white text-xl shadow" aria-label="Закрыть">×</button>
+
+      <div class="grid md:grid-cols-2">
+        <div class="bg-[#eee5d9]">
+          <img id="modalImage" src="" alt="" class="h-full max-h-[500px] min-h-[300px] w-full object-cover">
+        </div>
+
+        <div class="p-5 sm:p-8">
+          <p id="modalCategory" class="text-xs uppercase tracking-[.2em] text-gold"></p>
+          <h2 id="modalTitle" class="serif mt-3 pr-8 text-3xl"></h2>
+          <p id="modalPrice" class="mt-4 text-xl font-semibold"></p>
+          <p id="modalRating" class="mt-2 text-sm text-gold"></p>
+          <p id="modalDescription" class="mt-5 text-sm leading-7 text-[#766d63]"></p>
+
+          <div class="mt-6">
+            <p class="mb-3 text-sm font-semibold">Цвет</p>
+            <div id="modalColors" class="flex flex-wrap gap-3"></div>
+          </div>
+
+          <div class="mt-6">
+            <p class="mb-3 text-sm font-semibold">Размер</p>
+            <div id="modalSizes" class="flex flex-wrap gap-2"></div>
+            <p id="sizeError" class="mt-2 hidden text-xs text-red-700">Выбери размер перед добавлением в корзину.</p>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-4">
+            <p class="text-sm font-semibold">Количество</p>
+            <div class="flex items-center border border-[#ded4c6]">
+              <button id="qtyMinus" class="h-10 w-10" aria-label="Уменьшить количество">−</button>
+              <span id="modalQty" class="min-w-10 text-center">1</span>
+              <button id="qtyPlus" class="h-10 w-10" aria-label="Увеличить количество">+</button>
+            </div>
+          </div>
+
+          <button id="addToCart" class="gold-button mt-7 w-full px-5 py-4 text-sm font-semibold">Добавить в корзину</button>
+          <button id="modalFavorite" class="mt-3 w-full border border-[#ded4c6] px-5 py-3 text-sm">♡ В избранное</button>
+          <p class="mt-4 text-xs leading-6 text-[#91877c]">Наличие и размеры указаны для демонстрации. Перед запуском магазина проверь реальные остатки.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- КОРЗИНА -->
+  <div id="cartModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="modal-panel max-w-xl p-5 sm:p-8">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="cartTitle" class="serif text-3xl">Твоя корзина</h2>
+        <button id="closeCart" class="grid h-10 w-10 place-items-center text-2xl" aria-label="Закрыть корзину">×</button>
+      </div>
+
+      <div id="cartItems" class="mt-5"></div>
+
+      <div id="cartEmpty" class="hidden py-10 text-center">
+        <p class="serif text-2xl">Корзина пока пуста</p>
+        <p class="mt-2 text-sm text-[#91877c]">Самое время найти что-нибудь красивое.</p>
+        <button id="continueShopping" class="gold-button mt-5 px-5 py-3 text-sm">Перейти в каталог</button>
+      </div>
+
+      <div id="cartSummary" class="mt-5 border-t border-[#e7dfd4] pt-5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-[#766d63]">Итого</span>
+          <strong id="cartTotal" class="text-xl">0 ₽</strong>
+        </div>
+        <button id="checkoutBtn" class="gold-button mt-5 w-full px-5 py-4 text-sm">Оформить заказ</button>
+        <p class="mt-3 text-xs leading-5 text-[#91877c]">Пока это демонстрационная корзина. Реальное оформление заказа нужно подключить отдельно.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const products = [
+        {
+          id: 1, name: "Пальто классическое", category: "Верхняя одежда",
+          price: 18990, oldPrice: 22990, rating: "4.8", reviews: 24,
+          image: "https://images.unsplash.com/photo-1548624149-f3221f4e8c0b?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L", "XL"],
+          colors: ["#b69a7a", "#e5d5bd", "#292929"],
+          description: "Элегантное пальто из премиальной шерсти. Универсальный силуэт для прохладного сезона. Подчёркивает фигуру и вписывается в любой образ.",
+          badge: "Хит"
+        },
+        {
+          id: 2, name: "Свитер оверсайз", category: "Кофты, свитеры",
+          price: 7990, rating: "4.7", reviews: 18,
+          image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L"],
+          colors: ["#d6c4aa", "#b7ad9c", "#4b463e"],
+          description: "Мягкий свитер свободного кроя. Подходит для уютных повседневных образов и легко сочетается с брюками или юбками.",
+          badge: "Новинка"
+        },
+        {
+          id: 3, name: "Брюки палаццо", category: "Брюки",
+          price: 9990, rating: "4.9", reviews: 32,
+          image: "https://images.unsplash.com/photo-1506629905607-d9c297d6f3a1?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L", "XL"],
+          colors: ["#c4ad8e", "#4b463e", "#242424"],
+          description: "Брюки с высокой посадкой и свободными штанинами. Лаконичный дизайн помогает создавать элегантные образы на каждый день."
+        },
+        {
+          id: 4, name: "Платье миди", category: "Платья",
+          price: 12990, rating: "4.8", reviews: 21,
+          image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L"],
+          colors: ["#eee4d7", "#b9a38a", "#222222"],
+          description: "Женственное платье миди для особенных случаев и повседневных выходов. Нейтральная палитра позволяет дополнить образ любимыми аксессуарами."
+        },
+        {
+          id: 5, name: "Сумка кожаная", category: "Другое",
+          price: 14990, rating: "4.6", reviews: 15,
+          image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=85",
+          sizes: ["One size"],
+          colors: ["#64442d", "#b79a78", "#222222"],
+          description: "Универсальная сумка лаконичной формы. Вместительная модель для повседневных вещей и завершения образа."
+        },
+        {
+          id: 6, name: "Тренч классический", category: "Верхняя одежда",
+          price: 16990, rating: "4.9", reviews: 17,
+          image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L", "XL"],
+          colors: ["#c7ad8d", "#ded1bf"],
+          description: "Тренч в классическом стиле с поясом. Лёгкий верхний слой, который гармонично сочетается с деловой и повседневной одеждой."
+        },
+        {
+          id: 7, name: "Кардиган мягкий", category: "Кофты, свитеры",
+          price: 6890, rating: "4.7", reviews: 12,
+          image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L"],
+          colors: ["#d5c1a7", "#928574", "#f4eee6"],
+          description: "Мягкий кардиган для многослойных образов. Удобный крой и спокойный оттенок делают его практичной основой гардероба."
+        },
+        {
+          id: 8, name: "Брюки прямые", category: "Брюки",
+          price: 8490, rating: "4.8", reviews: 11,
+          image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L", "XL"],
+          colors: ["#c8b69d", "#777064", "#242424"],
+          description: "Прямые брюки для офиса, прогулок и встреч. Лаконичная форма и универсальный оттенок легко комбинируются с базовым гардеробом."
+        },
+        {
+          id: 9, name: "Платье вечернее", category: "Платья",
+          price: 15990, rating: "4.9", reviews: 19,
+          image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85",
+          sizes: ["XS", "S", "M", "L"],
+          colors: ["#c8ad8b", "#28231e", "#eee4d7"],
+          description: "Изящное платье для вечера и особенных мероприятий. Сдержанный дизайн оставляет пространство для украшений и аксессуаров."
+        },
+        {
+          id: 10, name: "Сумка на каждый день", category: "Другое",
+          price: 10990, rating: "4.7", reviews: 9,
+          image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=85",
+          sizes: ["One size"],
+          colors: ["#694b35", "#bfa789", "#222222"],
+          description: "Практичная сумка для города. Компактный силуэт, удобные ручки и цвет, который подходит к большинству образов."
+        }
+      ];
+
+      const $ = id => document.getElementById(id);
+      const grid = $("productsGrid");
+      const productModal = $("productModal");
+      const cartModal = $("cartModal");
+      const toast = $("toast");
+
+      let category = "Все";
+      let searchQuery = "";
+      let selectedProduct = null;
+      let selectedSize = "";
+      let selectedColor = "";
+      let quantity = 1;
+      let cart = [];
+      let favorites = [];
+      let toastTimer = null;
+      let previousFocus = null;
+
+      const money = value =>
+        new Intl.NumberFormat("ru-RU").format(value) + " ₽";
+
+      function notify(message) {
+        toast.textContent = message;
+        toast.hidden = false;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.hidden = true;
+        }, 3000);
+      }
+
+      function openModal(modal) {
+        previousFocus = document.activeElement;
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        const button = modal.querySelector("button");
+        if (button) button.focus();
+      }
+
+      function closeModal(modal) {
+        modal.classList.add("hidden");
+        if (productModal.classList.contains("hidden") &&
+            cartModal.classList.contains("hidden")) {
+          document.body.style.overflow = "";
+        }
+        if (previousFocus && previousFocus.focus) previousFocus.focus();
+      }
+
+      function renderProducts() {
+        const filtered = products.filter(product => {
+          const matchesCategory = category === "Все" ||
+            product.category === category;
+          const matchesSearch = (product.name + " " + product.category)
+            .toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesFavorites = category !== "Избранное" ||
+            favorites.includes(product.id);
+
+          return matchesCategory && matchesSearch && matchesFavorites;
+        });
+
+        grid.innerHTML = filtered.map(product => `
+          <article class="product-card overflow-hidden rounded-md">
+            <div class="relative cursor-pointer" data-open="${product.id}" tabindex="0" role="button" aria-label="Подробнее: ${product.name}">
+              <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+              ${product.badge ? `<span class="absolute left-2 top-2 rounded-full bg-[#a17b45] px-3 py-1 text-[10px] text-white">${product.badge}</span>` : ""}
+            </div>
+            <div class="p-3 sm:p-4">
+              <div class="flex items-start justify-between gap-2">
+                <button data-open="${product.id}" class="text-left text-xs leading-5 hover:text-gold sm:text-sm">${product.name}</button>
+                <button data-favorite="${product.id}" class="shrink-0 text-lg ${favorites.includes(product.id) ? "text-gold" : "text-[#a17b45]"}" aria-label="Добавить в избранное">
+                  ${favorites.includes(product.id) ? "♥" : "♡"}
+                </button>
+              </div>
+              <p class="mt-1 text-[10px] text-[#91877c]">${product.category}</p>
+              <p class="mt-2 text-sm font-bold">${money(product.price)}</p>
+              ${product.oldPrice ? `<p class="mt-1 text-xs text-[#91877c] line-through">${money(product.oldPrice)}</p>` : ""}
+              <p class="mt-2 text-xs text-gold">★ ${product.rating} <span class="text-[#91877c]">(${product.reviews})</span></p>
+              <button data-open="${product.id}" class="gold-button mt-3 w-full px-2 py-2.5 text-xs">♧ &nbsp; Подробнее</button>
+            </div>
+          </article>
+        `).join("");
+
+        $("emptyProducts").classList.toggle("hidden", filtered.length !== 0);
+        grid.classList.toggle("hidden", filtered.length === 0);
+
+        $("catalogSubtitle").textContent =
+          category === "Избранное"
+            ? "Товары, которые тебе понравились"
+            : searchQuery
+              ? `Результаты поиска: ${filtered.length}`
+              : category === "Все"
+                ? "Лучшие позиции из нашего каталога"
+                : category;
+
+        document.querySelectorAll("[data-category]").forEach(button => {
+          const value = button.dataset.category;
+          const active = value === category;
+          if (button.closest("#categoryFilters")) {
+            button.classList.toggle("active", active);
+          }
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      }
+
+      function openProduct(id) {
+        const product = products.find(item => item.id === Number(id));
+        if (!product) return;
+
+        selectedProduct = product;
+        selectedSize = "";
+        selectedColor = product.colors[0];
+        quantity = 1;
+
+        $("modalImage").src = product.image;
+        $("modalImage").alt = product.name;
+        $("modalCategory").textContent = product.category;
+        $("modalTitle").textContent = product.name;
+        $("modalPrice").textContent = money(product.price);
+        $("modalRating").textContent = `★ ${product.rating} (${product.reviews} отзывов)`;
+        $("modalDescription").textContent = product.description;
+        $("modalQty").textContent = quantity;
+        $("sizeError").classList.add("hidden");
+
+        $("modalSizes").innerHTML = product.sizes.map(size => `
+          <button type="button" class="size-option text-xs" data-size="${size}" aria-pressed="false">${size}</button>
+        `).join("");
+
+        $("modalColors").innerHTML = product.colors.map((color, i) => `
+          <button type="button" data-color="${color}" aria-label="Выбрать цвет ${i + 1}"
+            aria-pressed="${i === 0 ? "true" : "false"}"
+            class="grid h-8 w-8 place-items-center rounded-full border ${i === 0 ? "border-[#28231e]" : "border-[#d7cbbb]"}"
+            style="background:${color}">
+            <span class="text-sm ${i === 0 ? "text-white" : "text-transparent"}">✓</span>
+          </button>
+        `).join("");
+
+        $("modalFavorite").textContent =
+          favorites.includes(product.id) ? "♥ В избранном" : "♡ В избранное";
+
+        openModal(productModal);
+      }
+
+      function addToCart() {
+        if (!selectedProduct) return;
+
+        if (!selectedSize) {
+          $("sizeError").classList.remove("hidden");
+          $("modalSizes").scrollIntoView({ block: "nearest", behavior: "smooth" });
+          return;
+        }
+
+        const key = `${selectedProduct.id}-${selectedSize}-${selectedColor}`;
+        const existing = cart.find(item => item.key === key);
+
+        if (existing) {
+          existing.quantity += quantity;
+        } else {
+          cart.push({
+            key,
+            id: selectedProduct.id,
+            size: selectedSize,
+            color: selectedColor,
+            quantity,
+            price: selectedProduct.price
+          });
+        }
+
+        updateCart();
+        closeModal(productModal);
+        notify("Товар добавлен в корзину");
+      }
+
+      function updateCart() {
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        $("cartCount").textContent = count;
+
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        $("cartTotal").textContent = money(total);
+
+        $("cartEmpty").classList.toggle("hidden", cart.length > 0);
+        $("cartSummary").classList.toggle("hidden", cart.length === 0);
+
+        $("cartItems").innerHTML = cart.map(item => {
+          const product = products.find(p => p.id === item.id);
+          if (!product) return "";
+
+          return `
+            <div class="cart-line">
+              <img src="${product.image}" alt="${product.name}" loading="lazy">
+              <div class="min-w-0">
+                <div class="flex items-start justify-between gap-2">
+                  <p class="text-sm font-semibold">${product.name}</p>
+                  <button data-remove="${item.key}" class="text-lg text-[#91877c]" aria-label="Удалить товар">×</button>
+                </div>
+                <p class="mt-1 text-xs text-[#91877c]">Размер: ${item.size}</p>
+                <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center border border-[#ded4c6] text-sm">
+                    <button data-cart-minus="${item.key}" class="h-8 w-8" aria-label="Уменьшить">−</button>
+                    <span class="min-w-7 text-center">${item.quantity}</span>
+                    <button data-cart-plus="${item.key}" class="h-8 w-8" aria-label="Увеличить">+</button>
+                  </div>
+                  <strong class="text-sm">${money(item.price * item.quantity)}</strong>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function showCategory(value) {
+        category = value;
+        searchQuery = "";
+        $("searchInput").value = "";
+        renderProducts();
+        $("catalog").scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Категории
+      document.querySelectorAll("[data-category]").forEach(button => {
+        button.addEventListener("click", () => {
+          showCategory(button.dataset.category);
+        });
+      });
+
+      $("showAll").addEventListener("click", () => showCategory("Все"));
+      $("clearSearch").addEventListener("click", () => showCategory("Все"));
+
+      // Открытие карточек и избранное — делегирование событий
+      grid.addEventListener("click", event => {
+        const open = event.target.closest("[data-open]");
+        const favorite = event.target.closest("[data-favorite]");
+
+        if (open) openProduct(open.dataset.open);
+
+        if (favorite) {
+          const id = Number(favorite.dataset.favorite);
+          favorites = favorites.includes(id)
+            ? favorites.filter(item => item !== id)
+            : [...favorites, id];
+
+          renderProducts();
+          if (selectedProduct && selectedProduct.id === id) {
+            $("modalFavorite").textContent =
+              favorites.includes(id) ? "♥ В избранном" : "♡ В избранное";
+          }
+        }
+      });
+
+      grid.addEventListener("keydown", event => {
+        const open = event.target.closest("[data-open]");
+        if (open && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          openProduct(open.dataset.open);
+        }
+      });
+
+      // Размеры и цвета
+      $("modalSizes").addEventListener("click", event => {
+        const button = event.target.closest("[data-size]");
+        if (!button) return;
+
+        selectedSize = button.dataset.size;
+        $("sizeError").classList.add("hidden");
+
+        $("modalSizes").querySelectorAll("[data-size]").forEach(item => {
+          const active = item === button;
+          item.classList.toggle("active", active);
+          item.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      });
+
+      $("modalColors").addEventListener("click", event => {
+        const button = event.target.closest("[data-color]");
+        if (!button) return;
+
+        selectedColor = button.dataset.color;
+
+        $("modalColors").querySelectorAll("[data-color]").forEach(item => {
+          const active = item === button;
+          item.classList.toggle("border-[#28231e]", active);
+          item.classList.toggle("border-[#d7cbbb]", !active);
+          item.setAttribute("aria-pressed", active ? "true" : "false");
+          const check = item.querySelector("span");
+          check.classList.toggle("text-white", active);
+          check.classList.toggle("text-transparent", !active);
+        });
+      });
+
+      $("qtyMinus").addEventListener("click", () => {
+        quantity = Math.max(1, quantity - 1);
+        $("modalQty").textContent = quantity;
+      });
+
+      $("qtyPlus").addEventListener("click", () => {
+        quantity = Math.min(99, quantity + 1);
+        $("modalQty").textContent = quantity;
+      });
+
+      $("addToCart").addEventListener("click", addToCart);
+
+      $("modalFavorite").addEventListener("click", () => {
+        if (!selectedProduct) return;
+        const id = selectedProduct.id;
+
+        favorites = favorites.includes(id)
+          ? favorites.filter(item => item !== id)
+          : [...favorites, id];
+
+        $("modalFavorite").textContent =
+          favorites.includes(id) ? "♥ В избранном" : "♡ В избранное";
+        renderProducts();
+        notify(favorites.includes(id) ? "Добавлено в избранное" : "Удалено из избранного");
+      });
+
+      // Корзина
+      $("cartBtn").addEventListener("click", () => {
+        updateCart();
+        openModal(cartModal);
+      });
+
+      $("closeCart").addEventListener("click", () => closeModal(cartModal));
+      $("closeProductModal").addEventListener("click", () => closeModal(productModal));
+
+      $("continueShopping").addEventListener("click", () => {
+        closeModal(cartModal);
+        $("catalog").scrollIntoView({ behavior: "smooth" });
+      });
+
+      $("cartItems").addEventListener("click", event => {
+        const remove = event.target.closest("[data-remove]");
+        const plus = event.target.closest("[data-cart-plus]");
+        const minus = event.target.closest("[data-cart-minus]");
+
+        if (remove) {
+          cart = cart.filter(item => item.key !== remove.dataset.remove);
+        }
+
+        if (plus) {
+          const item = cart.find(item => item.key === plus.dataset.cartPlus);
+          if (item) item.quantity = Math.min(99, item.quantity + 1);
+        }
+
+        if (minus) {
+          const item = cart.find(item => item.key === minus.dataset.cartMinus);
+          if (item) {
+            item.quantity--;
+            if (item.quantity <= 0) cart = cart.filter(cartItem => cartItem.key !== item.key);
+          }
+        }
+
+        updateCart();
+      });
+
+      $("checkoutBtn").addEventListener("click", () => {
+        if (cart.length === 0) return;
+
+        const order = cart.map(item => {
+          const product = products.find(p => p.id === item.id);
+          return `${product.name}; размер ${item.size}; количество ${item.quantity}; ${money(item.price * item.quantity)}`;
+        }).join("\n");
+
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+        const message = `Здравствуйте! Хочу оформить заказ в ÉTHYL:\n\n${order}\n\nИтого: ${money(total)}`;
+
+        closeModal(cartModal);
+        $("contactMessage").value = message;
+        $("contacts").scrollIntoView({ behavior: "smooth" });
+        $("contactName").focus({ preventScroll: true });
+        notify("Заказ подготовлен. Заполни контакты для связи.");
+      });
+
+      // Поиск
+      $("searchBtn").addEventListener("click", () => {
+        $("searchPanel").classList.toggle("hidden");
+        if (!$("searchPanel").classList.contains("hidden")) $("searchInput").focus();
+      });
+
+      function applySearch() {
+        category = "Все";
+        searchQuery = $("searchInput").value.trim();
+        renderProducts();
+        $("catalog").scrollIntoView({ behavior: "smooth" });
+      }
+
+      $("searchApply").addEventListener("click", applySearch);
+      $("searchInput").addEventListener("keydown", event => {
+        if (event.key === "Enter") applySearch();
+      });
+
+      $("favoritesBtn").addEventListener("click", () => {
+        category = "Избранное";
+        searchQuery = "";
+        $("searchInput").value = "";
+        renderProducts();
+        $("catalog").scrollIntoView({ behavior: "smooth" });
+        if (favorites.length === 0) notify("Пока нет избранных товаров");
+      });
+
+      // Мобильное меню
+      $("menuBtn").addEventListener("click", () => {
+        const menu = $("mobileMenu");
+        const isHidden = menu.classList.toggle("hidden");
+        $("menuBtn").setAttribute("aria-expanded", String(!isHidden));
+      });
+
+      $("mobileMenu").querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+          $("mobileMenu").classList.add("hidden");
+          $("menuBtn").setAttribute("aria-expanded", "false");
+        });
+      });
+
+      // Закрытие модальных окон по фону и Escape
+      [productModal, cartModal].forEach(modal => {
+        modal.addEventListener("click", event => {
+          if (event.target === modal) closeModal(modal);
+        });
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          if (!productModal.classList.contains("hidden")) closeModal(productModal);
+          else if (!cartModal.classList.contains("hidden")) closeModal(cartModal);
+        }
+      });
+
+      // Демонстрационная форма: не выдаём её за реальную отправку
+      $("contactForm").addEventListener("submit", event => {
+        event.preventDefault();
+
+        const name = $("contactName").value.trim();
+        const contact = $("contactWay").value.trim();
+        const message = $("contactMessage").value.trim();
+
+        if (!name || !contact || !message) {
+          notify("Заполни все поля формы.");
+          return;
+        }
+
+        const text = `Здравствуйте! Меня зовут ${name}.\nКонтакт: ${contact}\nСообщение: ${message}`;
+
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ethyl-message.txt";
+        link.click();
+        URL.revokeObjectURL(url);
+
+        notify("Сообщение сохранено в файл. Для отправки администратору подключи почту или сервер.");
+      });
+
+      renderProducts();
+      updateCart();
+    })();
+  </script>
+</body>
+</html>
